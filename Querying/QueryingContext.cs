@@ -4,7 +4,7 @@ namespace Querying
 {    
     public class QueryingContext : DbContext
     {
-        public QueryingContext() : base("Querying") //base("Data Source=(local);Initial Catalog=Querying;Trusted_Connection=True")
+        public QueryingContext() : base("Data Source=(local);Initial Catalog=Querying;Trusted_Connection=True")
         {
             Database.SetInitializer(new QueryingDatabaseInitializer());
         }

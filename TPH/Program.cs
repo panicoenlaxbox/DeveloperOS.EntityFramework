@@ -11,7 +11,7 @@ namespace TPH
         {
             using (var context = new InheritanceContext("TPH"))
             {
-                //context.ModelCreating += OnModelCreating;
+                context.ModelCreating += OnModelCreating;
                 context.Database.Initialize(true);
                 context.Database.Log = Console.WriteLine;
                 IQueryable<Payment> payments = from p in context.Payments select p;

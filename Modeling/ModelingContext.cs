@@ -14,7 +14,7 @@ namespace Modeling
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            //ComplexType(modelBuilder);
+            ComplexType(modelBuilder);
             TableSplitting(modelBuilder);
             EntitySplitting(modelBuilder);
             base.OnModelCreating(modelBuilder);
