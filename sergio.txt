@@ -1,0 +1,82 @@
+1. TPH
+    1.1 Comentar salida, consulta polimórfica vs no polimórfica (no se trae [Email])
+    1.2 Ver datos de [Payments] en lo relativo a [Discriminator]
+    1.3 Descomentar context.ModelCreating
+        1.3.1 Ver como cambió el nombre del campo y el valor (sin meternos en SQL)
+2. TPT
+    2.1 Comentar salida (igual que con TPH)
+3. TPCC
+    3.1 Ver que falla y explicar porque
+    3.2 Descomentar Id a mano en el inicializador y ver que funciona
+4. Modeling
+    4.1 Comentar las 3 consultas (las 2 primeras de TableSplitting para ver que imagen se carga de forma perezosa 
+        y la tercera para ver como podemos usar la propiedad calculada)
+    4.2 Descomentar ComplexType para ver como podemos dar nombres a los campos del tipo complejo
+5. Querying
+    5.1 Lazy loading
+        5.1.2 Ver SELECT N+1 y tipo dinámico proxy
+    5.2 Eager loading
+        5.2.1 Ver que sólo hay 1 SQL y como cargar campos relacionados no directos
+    5.3 Explicit loading
+        5.2.3 Explicar porque Foo y Bar sólo se cargan una vez
+    5.4 Deferred execution
+        5.4.1 Explicar que podría interesar o no
+    5.5 Inmediate execution
+        5.4.2 Ver que el nuevo pedido ya no sale
+    5.6 AsEnumerable
+        5.6.2 Ver Select como método de extension de Queryable y Select como método de extensión de Enumerable, 
+            pasar del mundo L2E a L2O. Yo he visto "como no traduce a SQL, le meto AsEnumerable y a correr"        
+    5.7 AsQueryable
+        5.7.1 Ver que AsQueryable no es volver a L2E, es que nuestro código funcionará en ambos mundos
+    5.8 Complex queries
+        5.7.2 Ver métodos de extensión de IQueryable, Expression<Func<Order, bool>>, construcción de forma progresiva
+        acumular variables para su posterior uso, añadir operadores de forma condicional
+        5.7.3 Convert anonymous to Named type (R#)
+    5.9 Dapper
+        5.9.1 Ver como donde no llega SqlQuery de EF, llega Dapper
+    5.10 Dynamic SQL
+        5.9.2 ExpandoObject y SQL dinámico
+7. Logging
+8. Tooling
+    8.1 Con Querying, LINQPad con ComplexQuery
+6. Migraciones en equipo    
+    Ver edmx
+    en C:\Temp
+        git clone https://github.com/panicoenlaxbox/DeveloperOS.EntityFramework
+        en C:\Temp\DeveloperOS.EntityFramework
+            git config user.name panicoenlaxbox
+            git config user.email panicoenlaxbox@gmail.com
+            Abrir DeveloperOS.EntityFramework en VS (otra instancia)
+            Cambiar a MigrationsTeamEnvironment2 en MigrationsTeamEnvironmentContext
+            Update-Database
+            SELECT * FROM MigrationsTeamEnvironment.dbo.__MigrationHistory
+            SELECT * FROM MigrationsTeamEnvironment2.dbo.__MigrationHistory
+    Ya tenemos 2 desarrolladores con 2 bases de datos locales a nivel
+    Desarrollador 1 hace un cambio
+        Descomentar Email 
+        Add-Migration Email
+        Update-Database
+        Sync
+    Desarrollador 2 hace un cambio
+        Descomentar Age
+        Add-Migration Age
+        Update-Database
+        Sync        
+            Falla, hacer pull, resolver conflictos 
+        Update-Database        
+            Specify the '-Verbose' flag to view the SQL statements being applied to the target database.
+            Applying explicit migrations: [201705231758488_Email].
+            Applying explicit migration: 201705231758488_Email.
+            Unable to update database to match the current model because there are pending changes and automatic migration is disabled. 
+            Either write the pending model changes to a code-based migration or enable automatic migration. 
+            Set DbMigrationsConfiguration.AutomaticMigrationsEnabled to true to enable automatic migration.
+            You can use the Add-Migration command to write the pending model changes to a code-based migration.
+            "La aplica (el campo Email está) pero no se queda bien el contexto" 
+            -> Ver que el edmx de Age (la última migración) no tiene el campo Email
+        Add-Migration Merge -IgnoreChanges
+        Update-Database
+        Sync
+    Desarrollador 1
+        Sync
+        No olvidar cambiar a MigrationsTeamEnvironmentContext (bajara en 2)
+        Update-Database (aplica Age y Merge)    
